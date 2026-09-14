@@ -60,42 +60,121 @@
   main{max-width:560px; margin:0 auto; padding:16px; padding-bottom:60px;}
 
   /* login */
-  .login-wrap{min-height:calc(100vh - 64px); display:flex; align-items:center; justify-content:center; padding:24px 16px;}
+  :root{
+    --lg-navy-0:#03050a; --lg-navy-1:#070c17; --lg-navy-2:#0c1424;
+    --lg-emerald:#10b981; --lg-cyan:#22d3ee; --lg-violet:#6366f1;
+    --lg-ink:#eef2f7; --lg-sub:#93a1b8; --lg-line:rgba(255,255,255,.09);
+  }
+  .login-wrap{
+    position:relative; min-height:calc(100vh - 64px); overflow:hidden;
+    display:flex; align-items:center; justify-content:center; padding:24px 16px;
+    background:
+      radial-gradient(60% 50% at 18% 12%, rgba(16,185,129,.16), transparent 60%),
+      radial-gradient(55% 45% at 85% 82%, rgba(34,211,238,.14), transparent 60%),
+      linear-gradient(180deg, var(--lg-navy-0), var(--lg-navy-1) 45%, var(--lg-navy-2));
+  }
+  .login-orb{
+    position:absolute; border-radius:50%; filter:blur(60px); opacity:.55; pointer-events:none;
+    animation:lgDrift 22s ease-in-out infinite;
+  }
+  .login-orb.o1{width:340px; height:340px; left:-90px; top:-70px; background:radial-gradient(circle,var(--lg-emerald),transparent 70%);}
+  .login-orb.o2{width:300px; height:300px; right:-80px; bottom:-60px; background:radial-gradient(circle,var(--lg-cyan),transparent 70%); animation-delay:-9s; animation-direction:reverse;}
+  .login-orb.o3{width:220px; height:220px; right:12%; top:8%; background:radial-gradient(circle,var(--lg-violet),transparent 70%); opacity:.28; animation-delay:-4s;}
+  @keyframes lgDrift{
+    0%,100%{transform:translate(0,0) scale(1);}
+    50%{transform:translate(26px,-18px) scale(1.08);}
+  }
+  .login-grid{
+    position:absolute; inset:-1px; pointer-events:none; opacity:.35;
+    background-image:linear-gradient(var(--lg-line) 1px, transparent 1px), linear-gradient(90deg, var(--lg-line) 1px, transparent 1px);
+    background-size:42px 42px; mask-image:radial-gradient(70% 60% at 50% 40%, #000 20%, transparent 78%);
+    animation:lgGridPan 30s linear infinite;
+  }
+  @keyframes lgGridPan{0%{background-position:0 0,0 0;} 100%{background-position:42px 84px,84px 42px;}}
+  @media (prefers-reduced-motion:reduce){
+    .login-orb, .login-grid{animation:none;}
+  }
+
   .login-card{
-    width:100%; max-width:380px; background:var(--card); border:1px solid var(--line);
-    border-radius:18px; padding:28px 24px; box-shadow:0 12px 32px -12px rgba(15,23,42,.12);
+    position:relative; z-index:1; width:100%; max-width:380px;
+    background:linear-gradient(180deg, rgba(255,255,255,.055), rgba(255,255,255,.02));
+    border:1px solid var(--lg-line); border-radius:20px; padding:30px 26px;
+    box-shadow:0 24px 60px -20px rgba(0,0,0,.65), inset 0 1px 0 rgba(255,255,255,.06);
+    backdrop-filter:blur(18px); -webkit-backdrop-filter:blur(18px);
+    color:var(--lg-ink);
   }
-  .login-card h1{font-size:19px; margin:0 0 4px; font-weight:800;}
-  .login-card p.hint{margin:0 0 20px; font-size:13px; color:var(--sub); line-height:1.5;}
-  .field{margin-bottom:14px;}
-  .field label{display:block; font-size:12.5px; font-weight:700; color:#334155; margin-bottom:6px;}
+  .login-card::before{
+    content:''; position:absolute; inset:0; border-radius:20px; padding:1px; pointer-events:none;
+    background:linear-gradient(135deg, rgba(16,185,129,.55), rgba(255,255,255,0) 30%, rgba(255,255,255,0) 70%, rgba(34,211,238,.45));
+    -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite:xor; mask-composite:exclude;
+  }
+  .login-badge{
+    width:46px; height:46px; border-radius:13px; margin-bottom:16px;
+    background:linear-gradient(135deg,var(--lg-emerald),var(--lg-cyan));
+    display:flex; align-items:center; justify-content:center;
+    box-shadow:0 0 0 0 rgba(16,185,129,.5), 0 10px 24px -8px rgba(16,185,129,.55);
+    animation:lgFadeUp .6s cubic-bezier(.16,1,.3,1) both, lgPulse 2.6s ease-in-out .8s infinite;
+  }
+  .login-badge svg{width:22px; height:22px; color:#04140f;}
+  @keyframes lgPulse{
+    0%,100%{box-shadow:0 0 0 0 rgba(16,185,129,.35), 0 10px 24px -8px rgba(16,185,129,.55);}
+    50%{box-shadow:0 0 0 9px rgba(16,185,129,0), 0 10px 24px -8px rgba(16,185,129,.55);}
+  }
+  @keyframes lgFadeUp{from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);}}
+  .login-card h1{
+    font-size:20px; margin:0 0 5px; font-weight:800; letter-spacing:-.01em;
+    animation:lgFadeUp .6s .08s cubic-bezier(.16,1,.3,1) both;
+  }
+  .login-card p.hint{
+    margin:0 0 22px; font-size:13px; color:var(--lg-sub); line-height:1.55;
+    animation:lgFadeUp .6s .16s cubic-bezier(.16,1,.3,1) both;
+  }
+  .field{margin-bottom:14px; animation:lgFadeUp .6s .24s cubic-bezier(.16,1,.3,1) both;}
+  .field:nth-of-type(2){animation-delay:.3s;}
+  .field label{display:block; font-size:12px; font-weight:600; color:var(--lg-sub); margin-bottom:6px; letter-spacing:.01em;}
   .field input{
-    width:100%; padding:11px 13px; border-radius:10px; border:1.5px solid var(--line);
-    font-size:14.5px; outline:none; transition:border-color .15s ease;
+    width:100%; padding:12px 13px; border-radius:11px; border:1.5px solid var(--lg-line);
+    font-size:14.5px; outline:none; background:rgba(255,255,255,.04); color:var(--lg-ink);
+    transition:border-color .2s ease, box-shadow .2s ease, background .2s ease;
   }
-  .field input:focus{border-color:#0ea5e9;}
+  .field input::placeholder{color:#5b6b85;}
+  .field input:focus{
+    border-color:rgba(34,211,238,.65); background:rgba(255,255,255,.065);
+    box-shadow:0 0 0 4px rgba(34,211,238,.14);
+  }
   .btn{
-    width:100%; padding:12px; border-radius:10px; border:none; font-size:14.5px; font-weight:700;
+    width:100%; padding:12.5px; border-radius:11px; border:none; font-size:14.5px; font-weight:700;
     display:flex; align-items:center; justify-content:center; gap:8px;
   }
-  .btn-primary{background:linear-gradient(135deg,#10b981,#0ea5e9); color:#fff; box-shadow:0 8px 20px -8px rgba(16,185,129,.6);}
+  .btn-primary{
+    position:relative; overflow:hidden; isolation:isolate;
+    background:linear-gradient(135deg,#10b981,#0ea5e9); color:#04140f;
+    box-shadow:0 10px 26px -10px rgba(16,185,129,.65);
+    animation:lgFadeUp .6s .42s cubic-bezier(.16,1,.3,1) both;
+    transition:transform .15s ease, box-shadow .2s ease;
+  }
+  .btn-primary::after{
+    content:''; position:absolute; inset:0; z-index:-1;
+    background:linear-gradient(115deg, transparent 30%, rgba(255,255,255,.55) 48%, transparent 66%);
+    transform:translateX(-120%); transition:transform .6s ease;
+  }
+  .btn-primary:hover::after{transform:translateX(120%);}
+  .btn-primary:hover{box-shadow:0 14px 30px -10px rgba(16,185,129,.8);}
   .btn-primary:active{transform:translateY(1px);}
   .btn-primary[disabled]{opacity:.6;}
-  .auth-divider{display:flex; align-items:center; gap:10px; margin:16px 0; color:#94a3b8; font-size:12px;}
-  .auth-divider::before, .auth-divider::after{content:''; flex:1; height:1px; background:var(--line);}
   .forgot-pass-link{
-    display:block; background:none; border:none; padding:0; margin:-6px 0 14px;
-    font-size:12.5px; font-weight:700; color:#0e7490; text-align:left;
+    display:block; background:none; border:none; padding:0; margin:-4px 0 16px;
+    font-size:12.5px; font-weight:600; color:#67e8f9; text-align:left;
+    animation:lgFadeUp .6s .36s cubic-bezier(.16,1,.3,1) both;
   }
   .forgot-pass-link:active{opacity:.7;}
   .form-success{
-    background:#ecfdf5; color:#065f46; border:1px solid #a7f3d0; border-radius:10px;
+    background:rgba(16,185,129,.12); color:#6ee7b7; border:1px solid rgba(16,185,129,.35); border-radius:10px;
     padding:10px 12px; font-size:13px; margin-bottom:14px; line-height:1.5;
   }
-  .btn-google{background:#fff; color:#3c4043; border:1.5px solid #dadce0;}
-  .btn-google:active{background:#f8f9fa;}
   .form-error{
-    background:#fef2f2; color:#b91c1c; border:1px solid #fecaca; border-radius:10px;
+    background:rgba(220,38,38,.12); color:#fca5a5; border:1px solid rgba(220,38,38,.35); border-radius:10px;
     padding:10px 12px; font-size:13px; margin-bottom:14px; line-height:1.5;
   }
 
@@ -307,7 +386,14 @@
 <main>
   <!-- LOGIN -->
   <div class="login-wrap" id="loginView">
+    <div class="login-orb o1"></div>
+    <div class="login-orb o2"></div>
+    <div class="login-orb o3"></div>
+    <div class="login-grid"></div>
     <div class="login-card">
+      <div class="login-badge">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 7h-9M14 17H5M17 3l3 4-3 4M7 21l-3-4 3-4"/></svg>
+      </div>
       <h1>Masuk sebagai Admin</h1>
       <p class="hint">Gunakan akun admin yang sama dengan yang dipakai untuk mengelola toko. Aplikasi ini terhubung langsung ke database toko kamu secara real-time.</p>
       <div class="form-error" id="loginError" hidden></div>
@@ -315,20 +401,15 @@
       <form id="loginForm">
         <div class="field">
           <label>Email</label>
-          <input type="email" id="loginEmail" autocomplete="username" required />
+          <input type="email" id="loginEmail" autocomplete="username" placeholder="admin@tokokamu.com" required />
         </div>
         <div class="field">
           <label>Kata Sandi</label>
-          <input type="password" id="loginPass" autocomplete="current-password" required />
+          <input type="password" id="loginPass" autocomplete="current-password" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" required />
         </div>
         <button type="button" class="forgot-pass-link" id="setPasswordLink">Belum punya kata sandi? Kirim link untuk membuatnya</button>
         <button type="submit" class="btn btn-primary" id="loginBtn">Masuk</button>
       </form>
-      <div class="auth-divider"><span>atau</span></div>
-      <button type="button" class="btn btn-google" id="googleLoginBtn">
-        <svg viewBox="0 0 18 18" width="18" height="18"><path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 0 1-1.8 2.72v2.26h2.9c1.7-1.57 2.7-3.88 2.7-6.62z"/><path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.9-2.26c-.8.54-1.84.86-3.06.86-2.35 0-4.34-1.59-5.05-3.72H.95v2.33A9 9 0 0 0 9 18z"/><path fill="#FBBC05" d="M3.95 10.7A5.4 5.4 0 0 1 3.67 9c0-.59.1-1.17.28-1.7V4.97H.95A9 9 0 0 0 0 9c0 1.45.35 2.83.95 4.03l3-2.33z"/><path fill="#EA4335" d="M9 3.58c1.32 0 2.51.46 3.44 1.35l2.58-2.58C13.46.89 11.43 0 9 0A9 9 0 0 0 .95 4.97l3 2.33C4.66 5.17 6.65 3.58 9 3.58z"/></svg>
-        Masuk dengan Google
-      </button>
     </div>
   </div>
 
@@ -603,20 +684,6 @@
 
   $("logoutBtn").addEventListener("click", function(){ auth.signOut(); });
   $("deniedLogoutBtn").addEventListener("click", function(){ auth.signOut(); });
-
-  $("googleLoginBtn").addEventListener("click", function(){
-    var errEl = $("loginError");
-    errEl.hidden = true;
-    var provider = new firebase.auth.GoogleAuthProvider();
-    var btn = $("googleLoginBtn");
-    btn.disabled = true;
-    auth.signInWithPopup(provider).catch(function(err){
-      errEl.textContent = "Gagal masuk dengan Google: " + (err && err.message ? err.message : "coba lagi.");
-      errEl.hidden = false;
-    }).finally(function(){
-      btn.disabled = false;
-    });
-  });
 
   auth.onAuthStateChanged(function(user){
     currentUser = user;
