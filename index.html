@@ -83,6 +83,15 @@
   .btn-primary[disabled]{opacity:.6;}
   .auth-divider{display:flex; align-items:center; gap:10px; margin:16px 0; color:#94a3b8; font-size:12px;}
   .auth-divider::before, .auth-divider::after{content:''; flex:1; height:1px; background:var(--line);}
+  .forgot-pass-link{
+    display:block; background:none; border:none; padding:0; margin:-6px 0 14px;
+    font-size:12.5px; font-weight:700; color:#0e7490; text-align:left;
+  }
+  .forgot-pass-link:active{opacity:.7;}
+  .form-success{
+    background:#ecfdf5; color:#065f46; border:1px solid #a7f3d0; border-radius:10px;
+    padding:10px 12px; font-size:13px; margin-bottom:14px; line-height:1.5;
+  }
   .btn-google{background:#fff; color:#3c4043; border:1.5px solid #dadce0;}
   .btn-google:active{background:#f8f9fa;}
   .form-error{
@@ -302,6 +311,7 @@
       <h1>Masuk sebagai Admin</h1>
       <p class="hint">Gunakan akun admin yang sama dengan yang dipakai untuk mengelola toko. Aplikasi ini terhubung langsung ke database toko kamu secara real-time.</p>
       <div class="form-error" id="loginError" hidden></div>
+      <div class="form-success" id="loginSuccess" hidden></div>
       <form id="loginForm">
         <div class="field">
           <label>Email</label>
@@ -311,6 +321,7 @@
           <label>Kata Sandi</label>
           <input type="password" id="loginPass" autocomplete="current-password" required />
         </div>
+        <button type="button" class="forgot-pass-link" id="setPasswordLink">Belum punya kata sandi? Kirim link untuk membuatnya</button>
         <button type="submit" class="btn btn-primary" id="loginBtn">Masuk</button>
       </form>
       <div class="auth-divider"><span>atau</span></div>
@@ -551,6 +562,7 @@
     var pass = $("loginPass").value;
     var errEl = $("loginError");
     errEl.hidden = true;
+    $("loginSuccess").hidden = true;
     var btn = $("loginBtn");
     btn.disabled = true;
     btn.textContent = "Memproses...";
@@ -560,6 +572,32 @@
     }).finally(function(){
       btn.disabled = false;
       btn.textContent = "Masuk";
+    });
+  });
+
+  $("setPasswordLink").addEventListener("click", function(){
+    var email = $("loginEmail").value.trim();
+    var errEl = $("loginError");
+    var okEl = $("loginSuccess");
+    errEl.hidden = true;
+    okEl.hidden = true;
+    if (!email){
+      errEl.textContent = "Isi kolom Email dulu dengan email akun admin kamu (yang biasa dipakai masuk lewat Google), baru klik link ini.";
+      errEl.hidden = false;
+      return;
+    }
+    var link = $("setPasswordLink");
+    link.disabled = true;
+    link.textContent = "Mengirim...";
+    auth.sendPasswordResetEmail(email).then(function(){
+      okEl.textContent = "Link sudah dikirim ke " + email + ". Buka email itu, buat kata sandi baru, lalu masuk lagi di sini pakai email & kata sandi tersebut.";
+      okEl.hidden = false;
+    }).catch(function(err){
+      errEl.textContent = "Gagal mengirim link: " + (err && err.message ? err.message : "coba lagi.");
+      errEl.hidden = false;
+    }).finally(function(){
+      link.disabled = false;
+      link.textContent = "Belum punya kata sandi? Kirim link untuk membuatnya";
     });
   });
 
