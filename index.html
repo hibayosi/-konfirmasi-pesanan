@@ -9,9 +9,9 @@
 <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.1/firebase-app-compat.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.1/firebase-auth-compat.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.1/firebase-database-compat.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.1/firebase-app-compat.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.1/firebase-auth-compat.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.1/firebase-database-compat.js" defer></script>
 
 <style>
   :root{
@@ -559,7 +559,7 @@
 <div id="toastWrap"></div>
 
 <script>
-(function(){
+document.addEventListener("DOMContentLoaded", function(){
   "use strict";
 
   var FIREBASE_CONFIG = {
@@ -1295,7 +1295,7 @@
   $("rejectConfirmBtn").addEventListener("click", submitReject);
   $("rejectOverlay").addEventListener("click", function(e){ if (e.target.id === "rejectOverlay") closeRejectModal(); });
 
-})();
+});
 </script>
 </body>
 </html>
