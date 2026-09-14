@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>Konfirmasi Pesanan</title>
+
+<link href="https://fonts.googleapis.com" rel="preconnect" />
+<link href="https://fonts.gstatic.com" rel="preconnect" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.1/firebase-app-compat.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.1/firebase-auth-compat.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.1/firebase-database-compat.js"></script>
+
+<style>
+  :root{
+    --bg:#f8fafc; --ink:#0f172a; --sub:#64748b;
+    --emerald:#059669; --cyan:#0e7490; --amber:#f59e0b; --red:#dc2626; --blue:#1e40af;
+    --card:#ffffff; --line:#e2e8f0;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg); color:var(--ink); font-family:'Inter',system-ui,-apple-system,sans-serif;
+    -webkit-tap-highlight-color:transparent; min-height:100vh;
+  }
+  button{font-family:inherit; cursor:pointer;}
+  input{font-family:inherit;}
+
+  .topbar{
+    position:sticky; top:0; z-index:30; overflow:hidden;
+    background:linear-gradient(180deg,#0b1220 0%,#0a0f1c 100%); color:#fff;
+    padding:14px 16px; display:flex; align-items:center; justify-content:space-between; gap:10px;
+  }
+  .topbar::after{
+    content:''; position:absolute; left:0; right:0; bottom:0; height:2px;
+    background:linear-gradient(90deg,#059669,#0ea5e9,#6366f1,#059669);
+    background-size:300% 100%; animation:grad 10s ease infinite;
+  }
+  @keyframes grad{0%{background-position:0% 50%}100%{background-position:300% 50%}}
+  .brand{display:flex; align-items:center; gap:10px; min-width:0;}
+  .brand-icon{
+    width:34px; height:34px; flex-shrink:0; border-radius:10px;
+    background:linear-gradient(135deg,#059669,#0e7490); display:flex; align-items:center; justify-content:center;
+    box-shadow:0 6px 16px -4px rgba(5,150,105,.55);
+  }
+  .brand-icon svg{width:18px; height:18px; color:#fff;}
+  .brand-text{display:flex; flex-direction:column; line-height:1.2; min-width:0;}
+  .brand-name{font-weight:800; font-size:15px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .brand-sub{font-size:11px; color:#94a3b8; margin-top:2px;}
+  .topbar-actions{display:flex; align-items:center; gap:8px; flex-shrink:0;}
+  .pill-btn{
+    display:inline-flex; align-items:center; gap:6px; font-size:12.5px; font-weight:700;
+    padding:8px 14px; border-radius:999px; border:1px solid rgba(255,255,255,.16);
+    background:rgba(255,255,255,.07); color:#e2e8f0;
+  }
+  .pill-btn:active{background:rgba(255,255,255,.16);}
+
+  main{max-width:560px; margin:0 auto; padding:16px; padding-bottom:60px;}
+
+  /* login */
+  .login-wrap{min-height:calc(100vh - 64px); display:flex; align-items:center; justify-content:center; padding:24px 16px;}
+  .login-card{
+    width:100%; max-width:380px; background:var(--card); border:1px solid var(--line);
+    border-radius:18px; padding:28px 24px; box-shadow:0 12px 32px -12px rgba(15,23,42,.12);
+  }
+  .login-card h1{font-size:19px; margin:0 0 4px; font-weight:800;}
+  .login-card p.hint{margin:0 0 20px; font-size:13px; color:var(--sub); line-height:1.5;}
+  .field{margin-bottom:14px;}
+  .field label{display:block; font-size:12.5px; font-weight:700; color:#334155; margin-bottom:6px;}
+  .field input{
+    width:100%; padding:11px 13px; border-radius:10px; border:1.5px solid var(--line);
+    font-size:14.5px; outline:none; transition:border-color .15s ease;
+  }
+  .field input:focus{border-color:#0ea5e9;}
+  .btn{
+    width:100%; padding:12px; border-radius:10px; border:none; font-size:14.5px; font-weight:700;
+    display:flex; align-items:center; justify-content:center; gap:8px;
+  }
+  .btn-primary{background:linear-gradient(135deg,#10b981,#0ea5e9); color:#fff; box-shadow:0 8px 20px -8px rgba(16,185,129,.6);}
+  .btn-primary:active{transform:translateY(1px);}
+  .btn-primary[disabled]{opacity:.6;}
+  .form-error{
+    background:#fef2f2; color:#b91c1c; border:1px solid #fecaca; border-radius:10px;
+    padding:10px 12px; font-size:13px; margin-bottom:14px; line-height:1.5;
+  }
+
+  /* denied */
+  .denied-wrap{min-height:calc(100vh - 64px); display:flex; align-items:center; justify-content:center; padding:24px;}
+  .denied-card{text-align:center; max-width:340px;}
+  .denied-card .emoji{font-size:40px; margin-bottom:10px;}
+  .denied-card h2{margin:0 0 8px; font-size:17px;}
+  .denied-card p{margin:0 0 18px; font-size:13.5px; color:var(--sub); line-height:1.6;}
+
+  /* status bar */
+  .status-row{display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;}
+  .status-row h2{font-size:16px; margin:0; font-weight:800;}
+  .count-badge{
+    background:#fef3c7; color:#92400e; font-size:12.5px; font-weight:800;
+    padding:4px 10px; border-radius:999px;
+  }
+  .live-dot{display:inline-flex; align-items:center; gap:6px; font-size:11.5px; color:var(--sub);}
+  .live-dot::before{content:''; width:7px; height:7px; border-radius:50%; background:#10b981; box-shadow:0 0 0 3px rgba(16,185,129,.25);}
+  .notif-hint{
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
+    background:#eff6ff; border:1px solid #bfdbfe; color:#1e40af; font-size:12.5px;
+    padding:9px 12px; border-radius:10px; margin-bottom:12px;
+  }
+  .notif-hint button{background:#1e40af; color:#fff; border:none; padding:6px 11px; border-radius:8px; font-size:12px; font-weight:700; flex-shrink:0;}
+
+  .empty-state{
+    text-align:center; padding:50px 20px; color:var(--sub); font-size:14px;
+    background:var(--card); border:1px dashed var(--line); border-radius:16px;
+  }
+  .empty-state .emoji{font-size:34px; display:block; margin-bottom:10px;}
+
+  /* order card */
+  .order-card{
+    background:var(--card); border:1px solid var(--line); border-radius:16px;
+    padding:16px; margin-bottom:12px; box-shadow:0 4px 14px -10px rgba(15,23,42,.15);
+  }
+  .order-top{display:flex; justify-content:space-between; align-items:flex-start; gap:10px; margin-bottom:10px;}
+  .order-name{font-weight:800; font-size:15px; line-height:1.35;}
+  .order-price{font-weight:700; font-size:13.5px; color:var(--emerald); margin-top:3px;}
+  .status-chip{
+    flex-shrink:0; background:#fef3c7; color:#92400e; font-size:11px; font-weight:800;
+    padding:5px 10px; border-radius:999px; white-space:nowrap;
+  }
+  .order-meta-row{display:flex; align-items:center; gap:8px; margin-bottom:6px;}
+  .order-meta-row .avatar{
+    width:24px; height:24px; border-radius:50%; flex-shrink:0; object-fit:cover;
+    background:linear-gradient(135deg,#10b981,#0ea5e9); color:#fff; display:flex; align-items:center; justify-content:center;
+    font-weight:800; font-size:11px;
+  }
+  .order-meta{font-size:13px; color:#334155;}
+  .order-meta .lbl{color:var(--sub);}
+  .order-time{font-size:11.5px; color:var(--sub); margin-bottom:10px;}
+  .proof-btn{
+    display:inline-flex; align-items:center; gap:6px; font-size:12.5px; font-weight:700;
+    color:#0e7490; background:#ecfeff; border:1px solid #a5f3fc; padding:7px 12px; border-radius:9px; margin-bottom:10px;
+  }
+  .action-row{display:flex; gap:8px; flex-wrap:wrap;}
+  .btn-sm{padding:10px 14px; border-radius:9px; border:none; font-size:13px; font-weight:700; flex:1; min-width:130px;}
+  .btn-confirm{background:linear-gradient(135deg,#059669,#0e7490); color:#fff;}
+  .btn-confirm[disabled]{opacity:.55;}
+  .btn-reject{background:#fff; color:var(--red); border:1.5px solid #fecaca;}
+  .btn-reject[disabled]{opacity:.55;}
+
+  /* modal */
+  .modal-overlay{
+    position:fixed; inset:0; background:rgba(10,15,28,.6); z-index:100;
+    display:flex; align-items:flex-end; justify-content:center; backdrop-filter:blur(2px);
+  }
+  .modal-overlay.center{align-items:center; padding:20px;}
+  .modal-sheet{
+    width:100%; max-width:420px; background:#fff; border-radius:18px 18px 0 0;
+    padding:20px; max-height:88vh; overflow:auto;
+  }
+  .modal-overlay.center .modal-sheet{border-radius:18px;}
+  .modal-sheet h3{margin:0 0 4px; font-size:16px; font-weight:800;}
+  .modal-sheet p.sub{margin:0 0 16px; font-size:13px; color:var(--sub);}
+  .modal-sheet textarea{
+    width:100%; min-height:80px; border-radius:10px; border:1.5px solid var(--line);
+    padding:11px 13px; font-size:14px; font-family:inherit; resize:vertical; outline:none;
+  }
+  .modal-sheet textarea:focus{border-color:#0ea5e9;}
+  .modal-actions{display:flex; gap:8px; margin-top:16px;}
+  .modal-actions button{flex:1; padding:11px; border-radius:10px; font-weight:700; font-size:13.5px; border:none;}
+  .btn-cancel{background:#f1f5f9; color:#334155;}
+  .btn-danger-solid{background:var(--red); color:#fff;}
+
+  .proof-img-wrap{display:flex; align-items:center; justify-content:center;}
+  .proof-img-wrap img{max-width:100%; max-height:78vh; border-radius:12px; object-fit:contain;}
+  .modal-close{
+    position:absolute; top:14px; right:14px; width:32px; height:32px; border-radius:50%;
+    border:none; background:rgba(15,23,42,.55); color:#fff; font-size:16px; display:flex;
+    align-items:center; justify-content:center; z-index:2;
+  }
+
+  /* toast */
+  #toastWrap{position:fixed; left:0; right:0; bottom:18px; z-index:200; display:flex; flex-direction:column; align-items:center; gap:8px; pointer-events:none; padding:0 16px;}
+  .toast{
+    max-width:420px; width:100%; padding:12px 16px; border-radius:12px; font-size:13.5px; font-weight:600;
+    color:#fff; box-shadow:0 10px 26px -8px rgba(0,0,0,.35); animation:toastIn .2s ease;
+  }
+  .toast.ok{background:#059669;}
+  .toast.err{background:#dc2626;}
+  @keyframes toastIn{from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:translateY(0);}}
+
+  .loader{display:flex; align-items:center; justify-content:center; padding:40px 0; color:var(--sub); font-size:13.5px;}
+  .spinner{width:16px; height:16px; border-radius:50%; border:2px solid #cbd5e1; border-top-color:#0ea5e9; animation:spin .7s linear infinite; margin-right:8px;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+
+  [hidden]{display:none !important;}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand">
+    <div class="brand-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 7h-9M14 17H5M17 3l3 4-3 4M7 21l-3-4 3-4"/></svg>
+    </div>
+    <div class="brand-text">
+      <div class="brand-name">Konfirmasi Pesanan</div>
+      <div class="brand-sub" id="brandSub">Toko Online</div>
+    </div>
+  </div>
+  <div class="topbar-actions" id="topbarActions" hidden>
+    <button class="pill-btn" id="muteBtn" title="Aktif/nonaktifkan suara notifikasi">🔔</button>
+    <button class="pill-btn" id="logoutBtn">Keluar</button>
+  </div>
+</div>
+
+<main>
+  <!-- LOGIN -->
+  <div class="login-wrap" id="loginView">
+    <div class="login-card">
+      <h1>Masuk sebagai Admin</h1>
+      <p class="hint">Gunakan akun admin yang sama dengan yang dipakai untuk mengelola toko. Aplikasi ini terhubung langsung ke database toko kamu secara real-time.</p>
+      <div class="form-error" id="loginError" hidden></div>
+      <form id="loginForm">
+        <div class="field">
+          <label>Email</label>
+          <input type="email" id="loginEmail" autocomplete="username" required />
+        </div>
+        <div class="field">
+          <label>Kata Sandi</label>
+          <input type="password" id="loginPass" autocomplete="current-password" required />
+        </div>
+        <button type="submit" class="btn btn-primary" id="loginBtn">Masuk</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ACCESS DENIED -->
+  <div class="denied-wrap" id="deniedView" hidden>
+    <div class="denied-card">
+      <div class="emoji">🔒</div>
+      <h2>Akun ini bukan Admin</h2>
+      <p>Akun yang kamu gunakan untuk masuk tidak terdaftar sebagai admin toko, jadi tidak bisa melihat atau mengonfirmasi pesanan.</p>
+      <button class="btn btn-primary" id="deniedLogoutBtn" style="max-width:220px; margin:0 auto;">Coba Akun Lain</button>
+    </div>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div id="dashboardView" hidden>
+    <div class="status-row">
+      <h2>Perlu Dikonfirmasi <span class="count-badge" id="countBadge">0</span></h2>
+      <span class="live-dot">Live</span>
+    </div>
+    <div id="notifHint" class="notif-hint" hidden></div>
+    <div id="loader" class="loader"><span class="spinner"></span>Memuat pesanan...</div>
+    <div id="ordersList"></div>
+    <div class="empty-state" id="emptyState" hidden>
+      <span class="emoji">🎉</span>
+      Tidak ada pesanan yang menunggu konfirmasi saat ini.
+    </div>
+  </div>
+</main>
+
+<div id="toastWrap"></div>
+
+<script>
+(function(){
+  "use strict";
+
+  var FIREBASE_CONFIG = {
+    apiKey: "AIzaSyC7p8lhBVDkaAQ-bXppux3r1mGdQUMPd6o",
+    authDomain: "toko-online-temaxpro.firebaseapp.com",
+    projectId: "toko-online-temaxpro",
+    storageBucket: "toko-online-temaxpro.firebasestorage.app",
+    messagingSenderId: "543873562509",
+    appId: "1:543873562509:web:4bcc379ae8817963576fc4",
+    databaseURL: "https://toko-online-temaxpro-default-rtdb.asia-southeast1.firebasedatabase.app"
+  };
+  var ADMIN_UIDS = [ "LuPLfWKueMecAxl4yXax1n0evsr2" ];
+
+  firebase.initializeApp(FIREBASE_CONFIG);
+  var auth = firebase.auth();
+  var db = firebase.database();
+
+  var currentUser = null;
+  var isAdmin = false;
+  var ordersCache = {};
+  var productsCache = {};
+  var ordersRef = null;
+  var busyIds = {};
+  var seenOrderIds = null; // null = belum ada snapshot pertama
+  var soundMuted = localStorage.getItem("ts_admin_muted") === "1";
+  var audioCtx = null;
+  var BASE_TITLE = document.title;
+
+  function $(id){ return document.getElementById(id); }
+  function escapeHtml(s){
+    return String(s == null ? "" : s).replace(/[&<>"']/g, function(c){
+      return { "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[c];
+    });
+  }
+  function formatRupiah(n){
+    n = Number(n) || 0;
+    return "Rp" + n.toLocaleString("id-ID");
+  }
+  function formatOrderPrice(o){
+    if (o.priceUsd) return "$" + Number(o.priceUsd).toLocaleString("en-US");
+    return formatRupiah(o.price);
+  }
+  function relativeTime(ts){
+    if (!ts) return "-";
+    var diff = Date.now() - ts;
+    var min = Math.floor(diff / 60000);
+    if (min < 1) return "Baru saja";
+    if (min < 60) return min + " menit lalu";
+    var hr = Math.floor(min / 60);
+    if (hr < 24) return hr + " jam lalu";
+    var d = Math.floor(hr / 24);
+    return d + " hari lalu";
+  }
+  function showToast(msg, type){
+    var el = document.createElement("div");
+    el.className = "toast " + (type === "err" ? "err" : "ok");
+    el.textContent = msg;
+    $("toastWrap").appendChild(el);
+    setTimeout(function(){ el.remove(); }, 4200);
+  }
+
+  // ---------- Notifikasi (suara, getar, browser notification) ----------
+  function updateMuteBtn(){
+    $("muteBtn").textContent = soundMuted ? "🔕" : "🔔";
+  }
+  $("muteBtn").addEventListener("click", function(){
+    soundMuted = !soundMuted;
+    localStorage.setItem("ts_admin_muted", soundMuted ? "1" : "0");
+    updateMuteBtn();
+    showToast(soundMuted ? "Suara notifikasi dimatikan" : "Suara notifikasi diaktifkan", "ok");
+  });
+  updateMuteBtn();
+
+  function playBeep(){
+    if (soundMuted) return;
+    try{
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      var t0 = audioCtx.currentTime;
+      [880, 1180].forEach(function(freq, i){
+        var osc = audioCtx.createOscillator();
+        var gain = audioCtx.createGain();
+        osc.type = "sine";
+        osc.frequency.value = freq;
+        gain.gain.setValueAtTime(0.0001, t0 + i * 0.16);
+        gain.gain.exponentialRampToValueAtTime(0.22, t0 + i * 0.16 + 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.0001, t0 + i * 0.16 + 0.22);
+        osc.connect(gain); gain.connect(audioCtx.destination);
+        osc.start(t0 + i * 0.16);
+        osc.stop(t0 + i * 0.16 + 0.24);
+      });
+    } catch(e){ /* audio tidak didukung, abaikan */ }
+  }
+
+  function vibrateDevice(){
+    if (soundMuted) return;
+    if (navigator.vibrate) navigator.vibrate([180, 90, 180]);
+  }
+
+  function updateNotifHint(){
+    var hint = $("notifHint");
+    if (!("Notification" in window)){ hint.hidden = true; return; }
+    if (Notification.permission === "default"){
+      hint.hidden = false;
+      hint.innerHTML = '<span>Aktifkan notifikasi agar tetap diberi tahu saat ada pesanan baru, walau layar HP terkunci.</span><button id="enableNotifBtn" type="button">Aktifkan</button>';
+      $("enableNotifBtn").addEventListener("click", function(){
+        Notification.requestPermission().then(function(){ updateNotifHint(); });
+      });
+    } else {
+      hint.hidden = true;
+    }
+  }
+
+  function notifyNewOrders(newOrders){
+    if (!newOrders.length) return;
+    playBeep();
+    vibrateDevice();
+    if ("Notification" in window && Notification.permission === "granted"){
+      var first = newOrders[0];
+      var title = newOrders.length === 1
+        ? "Pesanan baru: " + (first.productName || "Produk")
+        : newOrders.length + " pesanan baru menunggu konfirmasi";
+      var body = newOrders.length === 1
+        ? "Dari " + (first.buyerName || first.buyerEmail || "pembeli") + " \u00b7 " + formatOrderPrice(first)
+        : "Buka aplikasi untuk melihat dan mengonfirmasi.";
+      try{
+        var n = new Notification(title, { body: body, tag: "ts-order-" + Date.now() });
+        n.onclick = function(){ window.focus(); n.close(); };
+      } catch(e){ /* abaikan jika gagal */ }
+    }
+  }
+
+  function updateTitleBadge(count){
+    document.title = count > 0 ? "(" + count + ") " + BASE_TITLE : BASE_TITLE;
+  }
+
+  // ---------- Auth ----------
+  $("loginForm").addEventListener("submit", function(e){
+    e.preventDefault();
+    var email = $("loginEmail").value.trim();
+    var pass = $("loginPass").value;
+    var errEl = $("loginError");
+    errEl.hidden = true;
+    var btn = $("loginBtn");
+    btn.disabled = true;
+    btn.textContent = "Memproses...";
+    auth.signInWithEmailAndPassword(email, pass).catch(function(err){
+      errEl.textContent = "Gagal masuk: " + (err && err.message ? err.message : "periksa email/kata sandi.");
+      errEl.hidden = false;
+    }).finally(function(){
+      btn.disabled = false;
+      btn.textContent = "Masuk";
+    });
+  });
+
+  $("logoutBtn").addEventListener("click", function(){ auth.signOut(); });
+  $("deniedLogoutBtn").addEventListener("click", function(){ auth.signOut(); });
+
+  auth.onAuthStateChanged(function(user){
+    currentUser = user;
+    if (ordersRef) { ordersRef.off(); ordersRef = null; }
+
+    if (!user){
+      isAdmin = false;
+      $("loginView").hidden = false;
+      $("deniedView").hidden = true;
+      $("dashboardView").hidden = true;
+      $("topbarActions").hidden = true;
+      $("brandSub").textContent = "Toko Online";
+      $("notifHint").hidden = true;
+      seenOrderIds = null;
+      updateTitleBadge(0);
+      return;
+    }
+
+    isAdmin = ADMIN_UIDS.indexOf(user.uid) !== -1;
+    $("topbarActions").hidden = false;
+
+    if (!isAdmin){
+      $("loginView").hidden = true;
+      $("dashboardView").hidden = true;
+      $("deniedView").hidden = false;
+      return;
+    }
+
+    $("loginView").hidden = true;
+    $("deniedView").hidden = true;
+    $("dashboardView").hidden = false;
+    $("brandSub").textContent = user.email || "Admin";
+    seenOrderIds = null;
+    updateNotifHint();
+    loadProducts();
+    listenOrders();
+  });
+
+  // ---------- Data ----------
+  function loadProducts(){
+    db.ref("products").once("value").then(function(snap){
+      productsCache = snap.val() || {};
+    }).catch(function(){ /* non-fatal, dipakai untuk cek produk premium saat konfirmasi */ });
+  }
+
+  function listenOrders(){
+    $("loader").hidden = false;
+    ordersRef = db.ref("orders").orderByChild("status").equalTo("menunggu");
+    ordersRef.on("value", function(snap){
+      $("loader").hidden = true;
+      ordersCache = snap.val() || {};
+      renderOrders();
+    }, function(err){
+      $("loader").hidden = true;
+      $("ordersList").innerHTML = "";
+      $("emptyState").hidden = true;
+      $("countBadge").textContent = "0";
+      showToast("Gagal memuat pesanan: " + (err && err.message ? err.message : "permission_denied"), "err");
+    });
+  }
+
+  function renderOrders(){
+    var ids = Object.keys(ordersCache);
+    $("countBadge").textContent = ids.length;
+    updateTitleBadge(ids.length);
+
+    if (seenOrderIds === null){
+      // snapshot pertama: catat semua id yang sudah ada, jangan dianggap "baru"
+      seenOrderIds = {};
+      ids.forEach(function(id){ seenOrderIds[id] = true; });
+    } else {
+      var newOrders = [];
+      ids.forEach(function(id){
+        if (!seenOrderIds[id]){
+          seenOrderIds[id] = true;
+          newOrders.push(ordersCache[id]);
+        }
+      });
+      if (newOrders.length) notifyNewOrders(newOrders);
+    }
+
+    var listEl = $("ordersList");
+
+    if (!ids.length){
+      listEl.innerHTML = "";
+      $("emptyState").hidden = false;
+      return;
+    }
+    $("emptyState").hidden = true;
+
+    ids.sort(function(a, b){ return (ordersCache[b].createdAt || 0) - (ordersCache[a].createdAt || 0); });
+
+    listEl.innerHTML = ids.map(function(id){
+      var o = ordersCache[id];
+      var initial = (o.buyerName || o.buyerEmail || "?").trim().charAt(0).toUpperCase() || "?";
+      var avatar = o.buyerPhotoURL
+        ? '<img class="avatar" src="' + escapeHtml(o.buyerPhotoURL) + '" alt="" referrerpolicy="no-referrer" onerror="this.outerHTML=\'<span class=&quot;avatar&quot;>' + initial + '</span>\'" />'
+        : '<span class="avatar">' + initial + "</span>";
+      var busy = !!busyIds[id];
+
+      return (
+        '<div class="order-card" data-order-id="' + escapeHtml(id) + '">' +
+          '<div class="order-top">' +
+            '<div><div class="order-name">' + escapeHtml(o.productName || "") + '</div>' +
+            '<div class="order-price">' + escapeHtml(formatOrderPrice(o)) + '</div></div>' +
+            '<span class="status-chip">Menunggu</span>' +
+          '</div>' +
+          '<div class="order-meta-row">' + avatar +
+            '<div class="order-meta">' + escapeHtml(o.buyerName || o.buyerEmail || "-") +
+            (o.buyerPhone ? ' &middot; ' + escapeHtml(o.buyerPhone) : '') + '</div>' +
+          '</div>' +
+          '<div class="order-meta" style="margin-bottom:6px;"><span class="lbl">Metode: </span>' + escapeHtml(o.paymentMethodName || "-") + '</div>' +
+          '<div class="order-time">' + relativeTime(o.createdAt) + '</div>' +
+          (o.proofImage ? '<button class="proof-btn" data-view-proof="' + escapeHtml(id) + '" type="button">🧾 Lihat Bukti Transfer</button><br/>' : '') +
+          '<div class="action-row">' +
+            '<button class="btn-sm btn-confirm" data-confirm="' + escapeHtml(id) + '" type="button" ' + (busy ? "disabled" : "") + '>' + (busy ? "Memproses..." : "Konfirmasi Dana Diterima") + '</button>' +
+            '<button class="btn-sm btn-reject" data-reject="' + escapeHtml(id) + '" type="button" ' + (busy ? "disabled" : "") + '>Tolak Pesanan</button>' +
+          '</div>' +
+        '</div>'
+      );
+    }).join("");
+
+    listEl.querySelectorAll("[data-view-proof]").forEach(function(btn){
+      btn.addEventListener("click", function(){
+        var id = btn.getAttribute("data-view-proof");
+        openProofModal(ordersCache[id] ? ordersCache[id].proofImage : null);
+      });
+    });
+    listEl.querySelectorAll("[data-confirm]").forEach(function(btn){
+      btn.addEventListener("click", function(){ confirmOrder(btn.getAttribute("data-confirm")); });
+    });
+    listEl.querySelectorAll("[data-reject]").forEach(function(btn){
+      btn.addEventListener("click", function(){ openRejectModal(btn.getAttribute("data-reject")); });
+    });
+  }
+
+  // ---------- Actions ----------
+  function confirmOrder(orderId){
+    if (busyIds[orderId]) return;
+    var o = ordersCache[orderId];
+    if (!o) return;
+    busyIds[orderId] = true;
+    renderOrders();
+
+    var productId = o.productId;
+    var p = productsCache[productId];
+    var isPremiumProduct = p && (p.status ? p.status === "premium" : Number(p.price) > 0);
+    var secretRef = isPremiumProduct ? db.ref("productSecrets/" + productId + "/link") : null;
+
+    (secretRef ? secretRef.once("value").then(function(s){ return s.val(); }) : Promise.resolve(null))
+      .catch(function(err){
+        err.tsStep = "membaca link download rahasia (cek rules baca productSecrets)";
+        throw err;
+      })
+      .then(function(link){
+        var update = {};
+        update["orders/" + orderId + "/status"] = "dana_diterima";
+        update["orders/" + orderId + "/downloadLink"] = link || null;
+        update["orders/" + orderId + "/confirmedAt"] = Date.now();
+        update["orders/" + orderId + "/confirmedBy"] = currentUser.email;
+        if (o.buyerUid){
+          update["openOrderLocks/" + o.buyerUid + "/" + productId] = null;
+        }
+        return db.ref().update(update).catch(function(err){
+          err.tsStep = "mengubah status pesanan (cek rules tulis orders)";
+          throw err;
+        });
+      })
+      .then(function(){
+        return db.ref("orderNotifFeed").push({
+          buyerName: o.buyerName || o.buyerEmail || "Seseorang",
+          buyerPhotoURL: o.buyerPhotoURL || null,
+          productName: o.productName || (p && (p.metaName || p.name)) || "",
+          productId: productId,
+          price: Number(o.price) || 0,
+          priceUsd: Number(o.priceUsd) || 0,
+          paymentMethodId: o.paymentMethodId || null,
+          createdAt: Date.now()
+        }).catch(function(){ /* non-fatal */ });
+      })
+      .then(function(){
+        return db.ref("productSoldCount/" + productId).transaction(function(cur){ return (cur || 0) + 1; })
+          .catch(function(){ /* non-fatal */ });
+      })
+      .then(function(){
+        showToast("Pesanan dikonfirmasi ✓", "ok");
+      })
+      .catch(function(err){
+        var step = err && err.tsStep ? " saat " + err.tsStep : "";
+        showToast("Gagal konfirmasi" + step + ": " + (err && err.message ? err.message : "coba lagi."), "err");
+      })
+      .finally(function(){
+        delete busyIds[orderId];
+        renderOrders();
+      });
+  }
+
+  var rejectingOrderId = null;
+  function openRejectModal(orderId){
+    rejectingOrderId = orderId;
+    $("rejectReasonInput").value = "Bukti transfer palsu/tidak sesuai";
+    $("rejectOverlay").hidden = false;
+  }
+  function closeRejectModal(){
+    rejectingOrderId = null;
+    $("rejectOverlay").hidden = true;
+  }
+  function submitReject(){
+    var orderId = rejectingOrderId;
+    var o = ordersCache[orderId];
+    if (!orderId || !o) { closeRejectModal(); return; }
+    var reason = $("rejectReasonInput").value.trim();
+    closeRejectModal();
+
+    busyIds[orderId] = true;
+    renderOrders();
+
+    var update = {};
+    update["orders/" + orderId + "/status"] = "ditolak";
+    update["orders/" + orderId + "/rejectedAt"] = Date.now();
+    update["orders/" + orderId + "/rejectedBy"] = currentUser.email;
+    update["orders/" + orderId + "/rejectReason"] = reason || null;
+    if (o.buyerUid && o.productId){
+      update["openOrderLocks/" + o.buyerUid + "/" + o.productId] = null;
+    }
+    db.ref().update(update).then(function(){
+      showToast("Pesanan ditolak", "ok");
+    }).catch(function(err){
+      showToast("Gagal menolak pesanan: " + (err && err.message ? err.message : "coba lagi."), "err");
+    }).finally(function(){
+      delete busyIds[orderId];
+      renderOrders();
+    });
+  }
+
+  function openProofModal(src){
+    if (!src) return;
+    $("proofImg").src = src;
+    $("proofOverlay").hidden = false;
+  }
+  function closeProofModal(){
+    $("proofOverlay").hidden = true;
+    $("proofImg").src = "";
+  }
+
+  // build modals into DOM
+  document.body.insertAdjacentHTML("beforeend",
+    '<div class="modal-overlay center" id="proofOverlay" hidden>' +
+      '<div class="modal-sheet" style="position:relative; max-width:480px;">' +
+        '<button class="modal-close" id="proofCloseBtn" type="button">&times;</button>' +
+        '<div class="proof-img-wrap"><img id="proofImg" src="" alt="Bukti transfer" /></div>' +
+      '</div>' +
+    '</div>' +
+    '<div class="modal-overlay" id="rejectOverlay" hidden>' +
+      '<div class="modal-sheet">' +
+        '<h3>Tolak Pesanan</h3>' +
+        '<p class="sub">Alasan ini akan tampil ke pembeli. Kosongkan jika tidak perlu.</p>' +
+        '<textarea id="rejectReasonInput" placeholder="Contoh: Bukti transfer tidak sesuai"></textarea>' +
+        '<div class="modal-actions">' +
+          '<button class="btn-cancel" id="rejectCancelBtn" type="button">Batal</button>' +
+          '<button class="btn-danger-solid" id="rejectConfirmBtn" type="button">Tolak Pesanan</button>' +
+        '</div>' +
+      '</div>' +
+    '</div>'
+  );
+  $("proofCloseBtn").addEventListener("click", closeProofModal);
+  $("proofOverlay").addEventListener("click", function(e){ if (e.target.id === "proofOverlay") closeProofModal(); });
+  $("rejectCancelBtn").addEventListener("click", closeRejectModal);
+  $("rejectConfirmBtn").addEventListener("click", submitReject);
+  $("rejectOverlay").addEventListener("click", function(e){ if (e.target.id === "rejectOverlay") closeRejectModal(); });
+
+})();
+</script>
+</body>
+</html>
