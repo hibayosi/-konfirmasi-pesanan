@@ -9,10 +9,6 @@
 <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.1/firebase-app-compat.js" defer></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.1/firebase-auth-compat.js" defer></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.1/firebase-database-compat.js" defer></script>
-
 <style>
   :root{
     --bg:#f8fafc; --ink:#0f172a; --sub:#64748b;
@@ -166,7 +162,16 @@
   .btn-primary:hover::after{transform:translateX(120%);}
   .btn-primary:hover{box-shadow:0 16px 34px -10px rgba(5,150,105,.72); transform:translateY(-1px);}
   .btn-primary:active{transform:translateY(1px);}
-  .btn-primary[disabled]{opacity:.6;}
+  .btn-primary[disabled]{opacity:.75; cursor:progress;}
+  .btn-primary[disabled]:hover{transform:none; box-shadow:0 12px 28px -10px rgba(5,150,105,.58);}
+  .btn-primary[disabled]::after{display:none;}
+  .btn-spinner{
+    width:15px; height:15px; border-radius:50%; flex:0 0 auto;
+    border:2px solid rgba(255,255,255,.35); border-top-color:#fff;
+    animation:btnSpin .6s linear infinite;
+  }
+  @keyframes btnSpin{to{transform:rotate(360deg);}}
+  @media (prefers-reduced-motion:reduce){ .btn-spinner{animation-duration:1.6s;} }
   .btn-primary svg{width:16px; height:16px; transition:transform .2s ease;}
   .btn-primary:hover svg{transform:translateX(3px);}
   .forgot-pass-link{
@@ -466,8 +471,9 @@
         </div>
         <button type="button" class="forgot-pass-link" id="setPasswordLink">Belum punya kata sandi? Kirim link untuk membuatnya</button>
         <button type="submit" class="btn btn-primary" id="loginBtn">
+          <span class="btn-spinner" id="loginSpinner" hidden></span>
           <span id="loginBtnLabel">Masuk</span>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>
+          <svg id="loginBtnArrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>
         </button>
       </form>
       <div class="login-footer">
@@ -558,8 +564,12 @@
 
 <div id="toastWrap"></div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.1/firebase-app-compat.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.1/firebase-auth-compat.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.1/firebase-database-compat.js"></script>
+
 <script>
-document.addEventListener("DOMContentLoaded", function(){
+(function(){
   "use strict";
 
   var FIREBASE_CONFIG = {
@@ -718,12 +728,16 @@ document.addEventListener("DOMContentLoaded", function(){
     var btnLabel = $("loginBtnLabel");
     btn.disabled = true;
     btnLabel.textContent = "Memproses...";
+    $("loginSpinner").hidden = false;
+    $("loginBtnArrow").hidden = true;
     auth.signInWithEmailAndPassword(email, pass).catch(function(err){
       errEl.textContent = "Gagal masuk: " + (err && err.message ? err.message : "periksa email/kata sandi.");
       errEl.hidden = false;
     }).finally(function(){
       btn.disabled = false;
       btnLabel.textContent = "Masuk";
+      $("loginSpinner").hidden = true;
+      $("loginBtnArrow").hidden = false;
     });
   });
 
@@ -824,12 +838,15 @@ document.addEventListener("DOMContentLoaded", function(){
       $("loader").hidden = true;
       ordersCache = snap.val() || {};
       renderOrders();
+      // Chat dimuat belakangan supaya login & daftar pesanan tampil lebih dulu
+      if (!chatsLoaded) setTimeout(loadChats, 400);
     }, function(err){
       $("loader").hidden = true;
       $("ordersList").innerHTML = "";
       $("emptyState").hidden = true;
       $("countBadge").textContent = "0";
       showToast("Gagal memuat pesanan: " + (err && err.message ? err.message : "permission_denied"), "err");
+      if (!chatsLoaded) setTimeout(loadChats, 400);
     });
   }
 
@@ -1295,7 +1312,7 @@ document.addEventListener("DOMContentLoaded", function(){
   $("rejectConfirmBtn").addEventListener("click", submitReject);
   $("rejectOverlay").addEventListener("click", function(e){ if (e.target.id === "rejectOverlay") closeRejectModal(); });
 
-});
+})();
 </script>
 </body>
 </html>
