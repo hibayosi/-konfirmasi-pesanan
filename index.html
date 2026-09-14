@@ -72,40 +72,74 @@
   .login-wrap{
     position:relative; min-height:calc(100vh - 64px); overflow:hidden;
     display:flex; align-items:center; justify-content:center; padding:24px 16px;
-    background:var(--bg);
+    background:
+      radial-gradient(900px 480px at 12% -12%, rgba(5,150,105,.16), transparent 60%),
+      radial-gradient(760px 420px at 108% 8%, rgba(14,116,144,.18), transparent 55%),
+      radial-gradient(600px 360px at 50% 118%, rgba(99,102,241,.10), transparent 60%),
+      linear-gradient(180deg,#f6f8fb 0%,#eef1f6 100%);
+  }
+  .login-wrap::before{
+    content:''; position:absolute; inset:0; pointer-events:none; opacity:.5;
+    background-image:radial-gradient(rgba(15,23,42,.08) 1px, transparent 1px);
+    background-size:22px 22px;
+    -webkit-mask-image:radial-gradient(560px 420px at 50% 38%, #000, transparent 75%);
+    mask-image:radial-gradient(560px 420px at 50% 38%, #000, transparent 75%);
   }
 
   .login-card{
-    position:relative; z-index:1; width:100%; max-width:380px;
-    background:var(--card);
-    border:1px solid var(--line); border-radius:20px; padding:30px 26px;
-    box-shadow:0 20px 45px -20px rgba(15,23,42,.18), 0 4px 14px -10px rgba(15,23,42,.08);
+    position:relative; z-index:1; width:100%; max-width:400px;
+    background:rgba(255,255,255,.86);
+    backdrop-filter:blur(22px) saturate(180%); -webkit-backdrop-filter:blur(22px) saturate(180%);
+    border:1px solid rgba(226,232,240,.9); border-radius:24px; padding:36px 30px 30px;
+    box-shadow:0 32px 64px -24px rgba(15,23,42,.28), 0 10px 24px -14px rgba(15,23,42,.12), inset 0 1px 0 rgba(255,255,255,.7);
     color:var(--ink);
+    animation:lgCardIn .55s cubic-bezier(.16,1,.3,1) both;
   }
+  @keyframes lgCardIn{from{opacity:0; transform:translateY(16px) scale(.98);} to{opacity:1; transform:translateY(0) scale(1);}}
   .login-card::before{
-    content:''; position:absolute; inset:0; border-radius:20px; padding:1px; pointer-events:none;
-    background:linear-gradient(135deg, rgba(5,150,105,.45), rgba(255,255,255,0) 30%, rgba(255,255,255,0) 70%, rgba(14,116,144,.35));
+    content:''; position:absolute; inset:0; border-radius:24px; padding:1px; pointer-events:none;
+    background:linear-gradient(140deg, rgba(5,150,105,.55), rgba(255,255,255,0) 32%, rgba(255,255,255,0) 68%, rgba(14,116,144,.45));
     -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
     -webkit-mask-composite:xor; mask-composite:exclude;
   }
+  .login-card::after{
+    content:''; position:absolute; left:50%; top:-1px; width:64%; height:1px; transform:translateX(-50%);
+    background:linear-gradient(90deg,transparent,rgba(5,150,105,.7),rgba(14,116,144,.7),transparent);
+  }
   @keyframes lgFadeUp{from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);}}
+
+  .login-icon{
+    width:52px; height:52px; margin:0 auto 16px; border-radius:15px;
+    background:var(--grad-brand); display:flex; align-items:center; justify-content:center;
+    box-shadow:0 12px 26px -8px rgba(5,150,105,.55), 0 0 0 6px rgba(5,150,105,.08);
+    animation:lgFadeUp .6s .04s cubic-bezier(.16,1,.3,1) both;
+  }
+  .login-icon svg{width:24px; height:24px; color:#fff;}
+
   .login-card h1{
-    font-size:20px; margin:0 0 5px; font-weight:800; letter-spacing:-.01em; color:var(--ink);
+    font-size:20px; margin:0 0 6px; font-weight:800; letter-spacing:-.01em; color:var(--ink);
+    text-align:center;
     animation:lgFadeUp .6s .08s cubic-bezier(.16,1,.3,1) both;
   }
   .login-card p.hint{
-    margin:0 0 22px; font-size:13px; color:var(--sub); line-height:1.55;
+    margin:0 0 24px; font-size:13px; color:var(--sub); line-height:1.6; text-align:center;
     animation:lgFadeUp .6s .16s cubic-bezier(.16,1,.3,1) both;
   }
   @media (prefers-reduced-motion:reduce){
-    .login-card h1, .login-card p.hint, .field, .btn-primary, .forgot-pass-link{animation:none;}
+    .login-card, .login-icon, .login-card h1, .login-card p.hint, .field, .btn-primary, .forgot-pass-link{animation:none;}
   }
-  .field{margin-bottom:14px; animation:lgFadeUp .6s .24s cubic-bezier(.16,1,.3,1) both;}
+  .field{margin-bottom:15px; animation:lgFadeUp .6s .24s cubic-bezier(.16,1,.3,1) both;}
   .field:nth-of-type(2){animation-delay:.3s;}
   .field label{display:block; font-size:12px; font-weight:600; color:var(--sub); margin-bottom:6px; letter-spacing:.01em;}
+  .input-wrap{position:relative; display:flex; align-items:center;}
+  .input-wrap .field-icon{
+    position:absolute; left:13px; width:17px; height:17px; color:#94a3b8; pointer-events:none;
+    transition:color .2s ease;
+  }
+  .input-wrap:focus-within .field-icon{color:var(--cyan);}
   .field input{
-    width:100%; padding:12px 13px; border-radius:11px; border:1.5px solid var(--line);
-    font-size:14.5px; outline:none; background:var(--bg); color:var(--ink);
+    width:100%; padding:12px 13px 12px 40px; border-radius:12px; border:1.5px solid var(--line);
+    font-size:14.5px; outline:none; background:#f8fafc; color:var(--ink);
     transition:border-color .2s ease, box-shadow .2s ease, background .2s ease;
   }
   .field input::placeholder{color:#94a3b8;}
@@ -114,13 +148,13 @@
     box-shadow:0 0 0 4px rgba(14,116,144,.12);
   }
   .btn{
-    width:100%; padding:12.5px; border-radius:11px; border:none; font-size:14.5px; font-weight:700;
+    width:100%; padding:13px; border-radius:12px; border:none; font-size:14.5px; font-weight:700;
     display:flex; align-items:center; justify-content:center; gap:8px;
   }
   .btn-primary{
     position:relative; overflow:hidden; isolation:isolate;
     background:linear-gradient(135deg,var(--emerald),var(--cyan)); color:#fff;
-    box-shadow:0 10px 26px -10px rgba(5,150,105,.55);
+    box-shadow:0 12px 28px -10px rgba(5,150,105,.58);
     animation:lgFadeUp .6s .42s cubic-bezier(.16,1,.3,1) both;
     transition:transform .15s ease, box-shadow .2s ease;
   }
@@ -130,14 +164,17 @@
     transform:translateX(-120%); transition:transform .6s ease;
   }
   .btn-primary:hover::after{transform:translateX(120%);}
-  .btn-primary:hover{box-shadow:0 14px 30px -10px rgba(5,150,105,.7);}
+  .btn-primary:hover{box-shadow:0 16px 34px -10px rgba(5,150,105,.72); transform:translateY(-1px);}
   .btn-primary:active{transform:translateY(1px);}
   .btn-primary[disabled]{opacity:.6;}
+  .btn-primary svg{width:16px; height:16px; transition:transform .2s ease;}
+  .btn-primary:hover svg{transform:translateX(3px);}
   .forgot-pass-link{
-    display:block; background:none; border:none; padding:0; margin:-4px 0 16px;
+    display:block; background:none; border:none; padding:0; margin:-5px 0 18px;
     font-size:12.5px; font-weight:600; color:var(--cyan); text-align:left;
     animation:lgFadeUp .6s .36s cubic-bezier(.16,1,.3,1) both;
   }
+  .forgot-pass-link:hover{text-decoration:underline;}
   .forgot-pass-link:active{opacity:.7;}
   .form-success{
     background:#ecfdf5; color:#047857; border:1px solid #a7f3d0; border-radius:10px;
@@ -147,6 +184,13 @@
     background:#fef2f2; color:#b91c1c; border:1px solid #fecaca; border-radius:10px;
     padding:10px 12px; font-size:13px; margin-bottom:14px; line-height:1.5;
   }
+  .login-footer{
+    display:flex; align-items:center; justify-content:center; gap:6px;
+    margin-top:22px; padding-top:18px; border-top:1px solid var(--line);
+    font-size:11.5px; font-weight:600; color:#94a3b8; letter-spacing:.01em;
+    animation:lgFadeUp .6s .48s cubic-bezier(.16,1,.3,1) both;
+  }
+  .login-footer svg{width:13px; height:13px; color:#94a3b8;}
 
   /* denied */
   .denied-wrap{min-height:calc(100vh - 64px); display:flex; align-items:center; justify-content:center; padding:24px;}
@@ -398,6 +442,9 @@
   <!-- LOGIN -->
   <div class="login-wrap" id="loginView">
     <div class="login-card">
+      <div class="login-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      </div>
       <h1>Masuk sebagai Admin</h1>
       <p class="hint">Gunakan akun admin yang sama dengan yang dipakai untuk mengelola toko. Aplikasi ini terhubung langsung ke database toko kamu secara real-time.</p>
       <div class="form-error" id="loginError" hidden></div>
@@ -405,15 +452,28 @@
       <form id="loginForm">
         <div class="field">
           <label>Email</label>
-          <input type="email" id="loginEmail" autocomplete="username" placeholder="admin@tokokamu.com" required />
+          <div class="input-wrap">
+            <svg class="field-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+            <input type="email" id="loginEmail" autocomplete="username" placeholder="admin@tokokamu.com" required />
+          </div>
         </div>
         <div class="field">
           <label>Kata Sandi</label>
-          <input type="password" id="loginPass" autocomplete="current-password" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" required />
+          <div class="input-wrap">
+            <svg class="field-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            <input type="password" id="loginPass" autocomplete="current-password" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" required />
+          </div>
         </div>
         <button type="button" class="forgot-pass-link" id="setPasswordLink">Belum punya kata sandi? Kirim link untuk membuatnya</button>
-        <button type="submit" class="btn btn-primary" id="loginBtn">Masuk</button>
+        <button type="submit" class="btn btn-primary" id="loginBtn">
+          <span id="loginBtnLabel">Masuk</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>
+        </button>
       </form>
+      <div class="login-footer">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        Koneksi aman &amp; terenkripsi
+      </div>
     </div>
   </div>
 
@@ -655,14 +715,15 @@
     errEl.hidden = true;
     $("loginSuccess").hidden = true;
     var btn = $("loginBtn");
+    var btnLabel = $("loginBtnLabel");
     btn.disabled = true;
-    btn.textContent = "Memproses...";
+    btnLabel.textContent = "Memproses...";
     auth.signInWithEmailAndPassword(email, pass).catch(function(err){
       errEl.textContent = "Gagal masuk: " + (err && err.message ? err.message : "periksa email/kata sandi.");
       errEl.hidden = false;
     }).finally(function(){
       btn.disabled = false;
-      btn.textContent = "Masuk";
+      btnLabel.textContent = "Masuk";
     });
   });
 
@@ -737,12 +798,11 @@
     updateNotifHint();
     loadProducts();
     listenOrders();
-    loadChats();
   });
 
   // ---------- Tabs ----------
   $("tabOrdersBtn").addEventListener("click", function(){ switchTab("orders"); });
-  $("tabChatBtn").addEventListener("click", function(){ switchTab("chat"); });
+  $("tabChatBtn").addEventListener("click", function(){ switchTab("chat"); loadChats(); });
   function switchTab(tab){
     $("tabOrdersBtn").classList.toggle("active", tab === "orders");
     $("tabChatBtn").classList.toggle("active", tab === "chat");
