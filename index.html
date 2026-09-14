@@ -81,6 +81,10 @@
   .btn-primary{background:linear-gradient(135deg,#10b981,#0ea5e9); color:#fff; box-shadow:0 8px 20px -8px rgba(16,185,129,.6);}
   .btn-primary:active{transform:translateY(1px);}
   .btn-primary[disabled]{opacity:.6;}
+  .auth-divider{display:flex; align-items:center; gap:10px; margin:16px 0; color:#94a3b8; font-size:12px;}
+  .auth-divider::before, .auth-divider::after{content:''; flex:1; height:1px; background:var(--line);}
+  .btn-google{background:#fff; color:#3c4043; border:1.5px solid #dadce0;}
+  .btn-google:active{background:#f8f9fa;}
   .form-error{
     background:#fef2f2; color:#b91c1c; border:1px solid #fecaca; border-radius:10px;
     padding:10px 12px; font-size:13px; margin-bottom:14px; line-height:1.5;
@@ -193,6 +197,84 @@
   @keyframes spin{to{transform:rotate(360deg);}}
 
   [hidden]{display:none !important;}
+
+  /* tabs */
+  .tab-bar{display:flex; gap:6px; background:#eef2f7; border-radius:12px; padding:4px; margin-bottom:16px;}
+  .tab-btn{
+    flex:1; border:none; background:transparent; padding:9px 8px; border-radius:9px;
+    font-size:13.5px; font-weight:700; color:var(--sub); display:flex; align-items:center; justify-content:center; gap:6px;
+  }
+  .tab-btn.active{background:#fff; color:var(--ink); box-shadow:0 2px 8px -2px rgba(15,23,42,.15);}
+  .tab-badge{
+    background:#dc2626; color:#fff; font-size:10.5px; font-weight:800; padding:1px 6px; border-radius:999px; min-width:16px;
+  }
+
+  /* chat list */
+  .chat-item{
+    display:flex; align-items:center; gap:11px; background:var(--card); border:1px solid var(--line);
+    border-radius:14px; padding:12px; margin-bottom:9px;
+  }
+  .chat-item:active{background:#f8fafc;}
+  .chat-avatar{
+    width:42px; height:42px; border-radius:50%; flex-shrink:0; object-fit:cover;
+    background:linear-gradient(135deg,#10b981,#0ea5e9); color:#fff; display:flex; align-items:center; justify-content:center;
+    font-weight:800; font-size:16px;
+  }
+  .chat-item-body{min-width:0; flex:1;}
+  .chat-item-name{font-weight:700; font-size:14px; display:flex; align-items:center; gap:6px;}
+  .chat-item-product{font-size:11.5px; color:#0e7490; margin-top:1px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .chat-item-snippet{font-size:12.5px; color:var(--sub); margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .chat-item-badge{
+    background:#dc2626; color:#fff; font-size:11px; font-weight:800; padding:2px 7px; border-radius:999px; flex-shrink:0;
+  }
+  .chat-item-mute{font-size:15px; flex-shrink:0;}
+
+  /* chat thread overlay */
+  .chat-thread-overlay{
+    position:fixed; inset:0; z-index:150; background:var(--bg); display:flex; flex-direction:column;
+  }
+  .chat-thread-head{
+    flex-shrink:0; display:flex; align-items:center; gap:10px; padding:12px 14px;
+    background:linear-gradient(180deg,#0b1220 0%,#0a0f1c 100%); color:#fff;
+  }
+  .chat-back-btn{background:rgba(255,255,255,.1); border:none; color:#fff; width:34px; height:34px; border-radius:50%; font-size:17px; flex-shrink:0;}
+  .chat-thread-info{min-width:0; flex:1;}
+  .chat-thread-name{font-weight:800; font-size:14.5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .chat-thread-sub{font-size:11.5px; color:#94a3b8; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  #chatBlockBtn.chat-blocked{background:rgba(220,38,38,.25); border-color:rgba(220,38,38,.5); color:#fecaca;}
+  .chat-unmute-row{
+    flex-shrink:0; display:flex; align-items:center; justify-content:space-between; gap:10px;
+    background:#fffbeb; color:#92400e; font-size:12px; padding:9px 14px; border-bottom:1px solid #fde68a;
+  }
+  .chat-unmute-row button{background:#f59e0b; color:#fff; border:none; padding:6px 10px; border-radius:8px; font-weight:700; font-size:11.5px; flex-shrink:0;}
+  .chat-thread-messages{flex:1; overflow-y:auto; padding:14px; display:flex; flex-direction:column;}
+  .ts-lc-msg{max-width:78%; padding:8px 12px; border-radius:14px; font-size:13.5px; margin-bottom:9px; word-break:break-word;}
+  .ts-lc-msg-mine{margin-left:auto; background:linear-gradient(135deg,#059669,#0e7490); color:#fff; border-bottom-right-radius:4px;}
+  .ts-lc-msg-theirs{margin-right:auto; background:#fff; border:1px solid var(--line); color:#0f172a; border-bottom-left-radius:4px;}
+  .ts-lc-msg-img{max-width:100%; border-radius:10px; display:block; margin-bottom:4px;}
+  .ts-lc-msg-text{white-space:pre-wrap;}
+  .ts-lc-msg-time{display:block; font-size:10px; opacity:.65; margin-top:3px; text-align:right;}
+  .chat-img-preview-wrap{
+    flex-shrink:0; display:flex; align-items:center; gap:10px; padding:8px 14px; background:#fff; border-top:1px solid var(--line);
+  }
+  .chat-img-preview-wrap img{width:44px; height:44px; object-fit:cover; border-radius:8px;}
+  .chat-img-preview-wrap button{margin-left:auto; background:#f1f5f9; border:none; width:26px; height:26px; border-radius:50%; font-size:15px; color:#334155;}
+  .chat-reply-form{
+    flex-shrink:0; display:flex; align-items:center; gap:8px; padding:10px 12px;
+    padding-bottom:calc(10px + env(safe-area-inset-bottom)); background:#fff; border-top:1px solid var(--line);
+  }
+  .chat-attach-btn{
+    width:38px; height:38px; border-radius:50%; background:#f1f5f9; display:flex; align-items:center; justify-content:center;
+    font-size:17px; flex-shrink:0; cursor:pointer;
+  }
+  .chat-reply-form input[type=text]{
+    flex:1; border:1.5px solid var(--line); border-radius:999px; padding:10px 15px; font-size:14px; outline:none;
+  }
+  .chat-reply-form input[type=text]:focus{border-color:#0ea5e9;}
+  .chat-send-btn{
+    background:linear-gradient(135deg,#059669,#0e7490); color:#fff; border:none; padding:10px 18px;
+    border-radius:999px; font-weight:700; font-size:13.5px; flex-shrink:0;
+  }
 </style>
 </head>
 <body>
@@ -231,6 +313,11 @@
         </div>
         <button type="submit" class="btn btn-primary" id="loginBtn">Masuk</button>
       </form>
+      <div class="auth-divider"><span>atau</span></div>
+      <button type="button" class="btn btn-google" id="googleLoginBtn">
+        <svg viewBox="0 0 18 18" width="18" height="18"><path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 0 1-1.8 2.72v2.26h2.9c1.7-1.57 2.7-3.88 2.7-6.62z"/><path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.9-2.26c-.8.54-1.84.86-3.06.86-2.35 0-4.34-1.59-5.05-3.72H.95v2.33A9 9 0 0 0 9 18z"/><path fill="#FBBC05" d="M3.95 10.7A5.4 5.4 0 0 1 3.67 9c0-.59.1-1.17.28-1.7V4.97H.95A9 9 0 0 0 0 9c0 1.45.35 2.83.95 4.03l3-2.33z"/><path fill="#EA4335" d="M9 3.58c1.32 0 2.51.46 3.44 1.35l2.58-2.58C13.46.89 11.43 0 9 0A9 9 0 0 0 .95 4.97l3 2.33C4.66 5.17 6.65 3.58 9 3.58z"/></svg>
+        Masuk dengan Google
+      </button>
     </div>
   </div>
 
@@ -246,19 +333,66 @@
 
   <!-- DASHBOARD -->
   <div id="dashboardView" hidden>
-    <div class="status-row">
-      <h2>Perlu Dikonfirmasi <span class="count-badge" id="countBadge">0</span></h2>
-      <span class="live-dot">Live</span>
+    <div class="tab-bar">
+      <button class="tab-btn active" id="tabOrdersBtn" type="button">Pesanan <span class="tab-badge" id="ordersTabBadge" hidden>0</span></button>
+      <button class="tab-btn" id="tabChatBtn" type="button">Live Chat <span class="tab-badge" id="chatTabBadge" hidden>0</span></button>
     </div>
-    <div id="notifHint" class="notif-hint" hidden></div>
-    <div id="loader" class="loader"><span class="spinner"></span>Memuat pesanan...</div>
-    <div id="ordersList"></div>
-    <div class="empty-state" id="emptyState" hidden>
-      <span class="emoji">🎉</span>
-      Tidak ada pesanan yang menunggu konfirmasi saat ini.
+
+    <div id="ordersPanel">
+      <div class="status-row">
+        <h2>Perlu Dikonfirmasi <span class="count-badge" id="countBadge">0</span></h2>
+        <span class="live-dot">Live</span>
+      </div>
+      <div id="notifHint" class="notif-hint" hidden></div>
+      <div id="loader" class="loader"><span class="spinner"></span>Memuat pesanan...</div>
+      <div id="ordersList"></div>
+      <div class="empty-state" id="emptyState" hidden>
+        <span class="emoji">🎉</span>
+        Tidak ada pesanan yang menunggu konfirmasi saat ini.
+      </div>
+    </div>
+
+    <div id="chatPanel" hidden>
+      <div class="status-row">
+        <h2>Live Chat</h2>
+        <span class="live-dot">Live</span>
+      </div>
+      <div id="chatListLoader" class="loader"><span class="spinner"></span>Memuat percakapan...</div>
+      <div id="chatList"></div>
+      <div class="empty-state" id="chatEmptyState" hidden>
+        <span class="emoji">💬</span>
+        Belum ada percakapan dari pembeli.
+      </div>
     </div>
   </div>
 </main>
+
+<!-- CHAT THREAD -->
+<div class="chat-thread-overlay" id="chatThreadOverlay" hidden>
+  <div class="chat-thread-head">
+    <button class="chat-back-btn" id="chatBackBtn" type="button">←</button>
+    <div class="chat-thread-info">
+      <div class="chat-thread-name" id="chatThreadName">-</div>
+      <div class="chat-thread-sub" id="chatThreadSub">-</div>
+    </div>
+    <button class="pill-btn" id="chatBlockBtn" type="button">Blokir</button>
+  </div>
+  <div class="chat-unmute-row" id="chatUnmuteRow" hidden>
+    <span>Pengguna ini sedang dibisukan otomatis karena spam.</span>
+    <button id="chatUnmuteBtn" type="button">Buka Bisu</button>
+  </div>
+  <div class="chat-thread-messages" id="chatThreadMessages"></div>
+  <div class="chat-img-preview-wrap" id="chatImgPreviewWrap" hidden>
+    <img id="chatImgPreview" src="" alt="" />
+    <button id="chatImgRemoveBtn" type="button">&times;</button>
+  </div>
+  <form class="chat-reply-form" id="chatReplyForm">
+    <label class="chat-attach-btn" for="chatImgInput">📎</label>
+    <input type="file" id="chatImgInput" accept="image/*" hidden />
+    <input type="text" id="chatReplyInput" placeholder="Balas pesan..." maxlength="500" autocomplete="off" />
+    <button type="submit" class="chat-send-btn">Kirim</button>
+  </form>
+</div>
 
 <div id="toastWrap"></div>
 
@@ -291,6 +425,17 @@
   var soundMuted = localStorage.getItem("ts_admin_muted") === "1";
   var audioCtx = null;
   var BASE_TITLE = document.title;
+
+  // live chat state
+  var chatsCache = {};
+  var chatsLoaded = false;
+  var chatBadgeInitialized = false;
+  var lastChatUnreadTotal = 0;
+  var productChatsRef = null;
+  var generalChatsRef = null;
+  var activeChatId = null;
+  var activeChatMsgsRef = null;
+  var activeChatPendingImage = null;
 
   function $(id){ return document.getElementById(id); }
   function escapeHtml(s){
@@ -421,9 +566,30 @@
   $("logoutBtn").addEventListener("click", function(){ auth.signOut(); });
   $("deniedLogoutBtn").addEventListener("click", function(){ auth.signOut(); });
 
+  $("googleLoginBtn").addEventListener("click", function(){
+    var errEl = $("loginError");
+    errEl.hidden = true;
+    var provider = new firebase.auth.GoogleAuthProvider();
+    var btn = $("googleLoginBtn");
+    btn.disabled = true;
+    auth.signInWithPopup(provider).catch(function(err){
+      errEl.textContent = "Gagal masuk dengan Google: " + (err && err.message ? err.message : "coba lagi.");
+      errEl.hidden = false;
+    }).finally(function(){
+      btn.disabled = false;
+    });
+  });
+
   auth.onAuthStateChanged(function(user){
     currentUser = user;
     if (ordersRef) { ordersRef.off(); ordersRef = null; }
+    if (productChatsRef) { productChatsRef.off(); productChatsRef = null; }
+    if (generalChatsRef) { generalChatsRef.off(); generalChatsRef = null; }
+    closeChatThread();
+    chatsCache = {};
+    chatsLoaded = false;
+    chatBadgeInitialized = false;
+    lastChatUnreadTotal = 0;
 
     if (!user){
       isAdmin = false;
@@ -456,7 +622,18 @@
     updateNotifHint();
     loadProducts();
     listenOrders();
+    loadChats();
   });
+
+  // ---------- Tabs ----------
+  $("tabOrdersBtn").addEventListener("click", function(){ switchTab("orders"); });
+  $("tabChatBtn").addEventListener("click", function(){ switchTab("chat"); });
+  function switchTab(tab){
+    $("tabOrdersBtn").classList.toggle("active", tab === "orders");
+    $("tabChatBtn").classList.toggle("active", tab === "chat");
+    $("ordersPanel").hidden = tab !== "orders";
+    $("chatPanel").hidden = tab !== "chat";
+  }
 
   // ---------- Data ----------
   function loadProducts(){
@@ -485,6 +662,9 @@
     var ids = Object.keys(ordersCache);
     $("countBadge").textContent = ids.length;
     updateTitleBadge(ids.length);
+    var ordersBadgeEl = $("ordersTabBadge");
+    ordersBadgeEl.textContent = ids.length > 99 ? "99+" : ids.length;
+    ordersBadgeEl.hidden = ids.length === 0;
 
     if (seenOrderIds === null){
       // snapshot pertama: catat semua id yang sudah ada, jangan dianggap "baru"
@@ -664,6 +844,255 @@
     $("proofOverlay").hidden = true;
     $("proofImg").src = "";
   }
+
+  // ---------- Live Chat ----------
+  function tsChatKey(type, productIdOrNull, buyerUid){
+    return type === "p" ? "p|" + productIdOrNull + "|" + buyerUid : "g|" + buyerUid;
+  }
+  function tsChatRefFromKey(key){
+    var parts = key.split("|");
+    if (parts[0] === "p") return db.ref("productChats/" + parts[1] + "/" + parts[2]);
+    return db.ref("generalChats/" + parts[1]);
+  }
+  function tsChatProductName(key, meta){
+    var parts = key.split("|");
+    if (parts[0] !== "p") return "Pertanyaan Umum";
+    var product = productsCache[parts[1]];
+    if (product && (product.metaName || product.name)) return product.metaName || product.name;
+    return meta && meta.productName ? meta.productName : "Produk";
+  }
+  function tsFormatChatTime(ts){
+    if (!ts) return "";
+    var d = new Date(ts);
+    var hh = String(d.getHours()).padStart(2, "0");
+    var mm = String(d.getMinutes()).padStart(2, "0");
+    return hh + ":" + mm;
+  }
+  function tsChatBubbleHtml(msg, mine){
+    var text = msg.text || "";
+    var imgHtml = msg.image ? '<img class="ts-lc-msg-img" src="' + msg.image + '" alt="Gambar" />' : "";
+    var isPlaceholderCaption = msg.image && text === "\ud83d\udcf7 Gambar";
+    var textHtml = text && !isPlaceholderCaption ? '<div class="ts-lc-msg-text">' + escapeHtml(text) + "</div>" : "";
+    return '<div class="ts-lc-msg ' + (mine ? "ts-lc-msg-mine" : "ts-lc-msg-theirs") + '">' + imgHtml + textHtml + '<span class="ts-lc-msg-time">' + tsFormatChatTime(msg.createdAt) + "</span></div>";
+  }
+
+  function loadChats(){
+    if (chatsLoaded) return;
+    chatsLoaded = true;
+    productChatsRef = db.ref("productChats");
+    productChatsRef.on("value", function(snap){
+      var all = snap.val() || {};
+      Object.keys(chatsCache).forEach(function(k){ if (k.indexOf("p|") === 0) delete chatsCache[k]; });
+      Object.keys(all).forEach(function(productId){
+        Object.keys(all[productId] || {}).forEach(function(buyerUid){
+          var meta = (all[productId][buyerUid] && all[productId][buyerUid].meta) || {};
+          chatsCache[tsChatKey("p", productId, buyerUid)] = meta;
+        });
+      });
+      renderChatList();
+    }, function(err){
+      $("chatListLoader").hidden = true;
+      $("chatList").innerHTML = '<div class="empty-state">Gagal memuat chat: ' + escapeHtml(err.message || "permission_denied") + "</div>";
+    });
+    generalChatsRef = db.ref("generalChats");
+    generalChatsRef.on("value", function(snap){
+      var all = snap.val() || {};
+      Object.keys(chatsCache).forEach(function(k){ if (k.indexOf("g|") === 0) delete chatsCache[k]; });
+      Object.keys(all).forEach(function(buyerUid){
+        var meta = (all[buyerUid] && all[buyerUid].meta) || {};
+        chatsCache[tsChatKey("g", null, buyerUid)] = meta;
+      });
+      renderChatList();
+    });
+  }
+
+  function renderChatList(){
+    $("chatListLoader").hidden = true;
+    var ids = Object.keys(chatsCache);
+    var listEl = $("chatList");
+
+    var unreadTotal = 0;
+    ids.forEach(function(id){ unreadTotal += Number(chatsCache[id].unreadAdmin) || 0; });
+    var badgeEl = $("chatTabBadge");
+    badgeEl.textContent = unreadTotal > 99 ? "99+" : unreadTotal;
+    badgeEl.hidden = unreadTotal === 0;
+    if (chatBadgeInitialized && unreadTotal > lastChatUnreadTotal){
+      notifyGeneric("Pesan baru masuk", "Ada pesan baru dari pembeli di Live Chat.");
+    }
+    chatBadgeInitialized = true;
+    lastChatUnreadTotal = unreadTotal;
+
+    if (!ids.length){
+      listEl.innerHTML = "";
+      $("chatEmptyState").hidden = false;
+      return;
+    }
+    $("chatEmptyState").hidden = true;
+
+    ids.sort(function(a, b){ return (chatsCache[b].lastMessageAt || 0) - (chatsCache[a].lastMessageAt || 0); });
+
+    listEl.innerHTML = ids.map(function(id){
+      var m = chatsCache[id];
+      var unread = Number(m.unreadAdmin) || 0;
+      var initial = (m.buyerName || "?").trim().charAt(0).toUpperCase() || "?";
+      var avatar = m.buyerPhotoURL
+        ? '<img class="chat-avatar" src="' + escapeHtml(m.buyerPhotoURL) + '" alt="" referrerpolicy="no-referrer" onerror="this.outerHTML=\'<span class=&quot;chat-avatar&quot;>' + initial + '</span>\'" />'
+        : '<span class="chat-avatar">' + initial + "</span>";
+      var productLabel = tsChatProductName(id, m);
+      var isMuted = Number(m.autoMuteUntil) > Date.now();
+      var muteBadge = isMuted ? '<span class="chat-item-mute" title="Sedang dibisukan otomatis karena spam">\u23f0</span>' : "";
+      return (
+        '<div class="chat-item" data-chat-id="' + escapeHtml(id) + '">' + avatar +
+        '<div class="chat-item-body">' +
+          '<div class="chat-item-name">' + escapeHtml(m.buyerName || "Pengguna") + "</div>" +
+          '<div class="chat-item-product">' + escapeHtml(productLabel) + "</div>" +
+          '<div class="chat-item-snippet">' + escapeHtml(m.lastMessage || "") + "</div>" +
+        "</div>" + muteBadge +
+        (unread > 0 ? '<span class="chat-item-badge">' + (unread > 99 ? "99+" : unread) + "</span>" : "") +
+        "</div>"
+      );
+    }).join("");
+
+    listEl.querySelectorAll("[data-chat-id]").forEach(function(el){
+      el.addEventListener("click", function(){ openChatThread(el.getAttribute("data-chat-id")); });
+    });
+  }
+
+  function notifyGeneric(title, body){
+    playBeep();
+    vibrateDevice();
+    if ("Notification" in window && Notification.permission === "granted"){
+      try{
+        var n = new Notification(title, { body: body, tag: "ts-chat-" + Date.now() });
+        n.onclick = function(){ window.focus(); n.close(); };
+      } catch(e){ /* abaikan */ }
+    }
+  }
+
+  function clearChatImage(){
+    activeChatPendingImage = null;
+    $("chatImgPreviewWrap").hidden = true;
+    $("chatImgPreview").src = "";
+    $("chatImgInput").value = "";
+  }
+
+  function updateChatBlockBtn(blocked){
+    var btn = $("chatBlockBtn");
+    btn.classList.toggle("chat-blocked", !!blocked);
+    btn.textContent = blocked ? "Buka Blokir" : "Blokir";
+  }
+
+  function openChatThread(chatKey){
+    activeChatId = chatKey;
+    clearChatImage();
+    var meta = chatsCache[chatKey] || {};
+    $("chatThreadName").textContent = meta.buyerName || "Pengguna";
+    $("chatThreadSub").textContent = (meta.buyerEmail || "") + " \u00b7 Produk: " + tsChatProductName(chatKey, meta);
+    updateChatBlockBtn(meta.blockedMember === true);
+    $("chatUnmuteRow").hidden = !(Number(meta.autoMuteUntil) > Date.now());
+    $("chatThreadMessages").innerHTML = '<div class="empty-state" style="border:none; background:transparent;">Memuat pesan...</div>';
+    $("chatThreadOverlay").hidden = false;
+
+    var ref = tsChatRefFromKey(chatKey);
+    if (activeChatMsgsRef) activeChatMsgsRef.off();
+    activeChatMsgsRef = ref.child("messages");
+    activeChatMsgsRef.on("value", function(snap){
+      var val = snap.val() || {};
+      var ids = Object.keys(val);
+      var msgsEl = $("chatThreadMessages");
+      if (!ids.length){
+        msgsEl.innerHTML = '<div class="empty-state" style="border:none; background:transparent;">Belum ada pesan.</div>';
+        return;
+      }
+      ids.sort(function(a, b){ return (val[a].createdAt || 0) - (val[b].createdAt || 0); });
+      msgsEl.innerHTML = ids.map(function(id){ return tsChatBubbleHtml(val[id], val[id].sender === "admin"); }).join("");
+      msgsEl.scrollTop = msgsEl.scrollHeight;
+    });
+    ref.child("meta/unreadAdmin").set(0);
+  }
+
+  function closeChatThread(){
+    if (activeChatMsgsRef) { activeChatMsgsRef.off(); activeChatMsgsRef = null; }
+    activeChatId = null;
+    clearChatImage();
+    $("chatThreadOverlay").hidden = true;
+  }
+
+  $("chatBackBtn").addEventListener("click", closeChatThread);
+
+  $("chatImgInput").addEventListener("change", function(e){
+    var file = e.target.files[0];
+    if (!file) return;
+    if (!/^image\//.test(file.type)){
+      showToast("File harus berupa gambar.", "err");
+      $("chatImgInput").value = "";
+      return;
+    }
+    if (file.size > 2 * 1024 * 1024){
+      showToast("Ukuran gambar maksimal 2 MB.", "err");
+      $("chatImgInput").value = "";
+      return;
+    }
+    var reader = new FileReader();
+    reader.onload = function(ev){
+      activeChatPendingImage = ev.target.result;
+      $("chatImgPreview").src = activeChatPendingImage;
+      $("chatImgPreviewWrap").hidden = false;
+    };
+    reader.readAsDataURL(file);
+  });
+  $("chatImgRemoveBtn").addEventListener("click", clearChatImage);
+
+  $("chatReplyForm").addEventListener("submit", function(e){
+    e.preventDefault();
+    if (!activeChatId) return;
+    var input = $("chatReplyInput");
+    var text = input.value.trim();
+    var pendingImage = activeChatPendingImage;
+    if (!text && !pendingImage) return;
+    var ref = tsChatRefFromKey(activeChatId);
+    var senderName = currentUser.displayName || currentUser.email || "Admin";
+    var payload = {
+      sender: "admin",
+      senderName: senderName,
+      text: text || "\ud83d\udcf7 Gambar",
+      createdAt: firebase.database.ServerValue.TIMESTAMP
+    };
+    if (pendingImage) payload.image = pendingImage;
+    ref.child("messages").push(payload).catch(function(err){
+      showToast("Gagal mengirim pesan: " + (err && err.message ? err.message : "coba lagi."), "err");
+    });
+    ref.child("meta").update({
+      lastMessage: text || "[Gambar]",
+      lastMessageAt: firebase.database.ServerValue.TIMESTAMP,
+      unreadMember: firebase.database.ServerValue.increment(1)
+    });
+    input.value = "";
+    clearChatImage();
+  });
+
+  $("chatBlockBtn").addEventListener("click", function(){
+    if (!activeChatId) return;
+    var meta = chatsCache[activeChatId] || {};
+    var nextBlocked = meta.blockedMember !== true;
+    var ref = tsChatRefFromKey(activeChatId);
+    ref.child("meta/blockedMember").set(nextBlocked).then(function(){
+      updateChatBlockBtn(nextBlocked);
+      showToast(nextBlocked ? "Pengguna diblokir dari live chat" : "Blokir dibuka", "ok");
+    }).catch(function(err){
+      showToast("Gagal mengubah status blokir: " + (err && err.message ? err.message : "coba lagi."), "err");
+    });
+  });
+
+  $("chatUnmuteBtn").addEventListener("click", function(){
+    if (!activeChatId) return;
+    var ref = tsChatRefFromKey(activeChatId);
+    ref.child("meta/autoMuteUntil").set(0).then(function(){
+      $("chatUnmuteRow").hidden = true;
+    }).catch(function(err){
+      showToast("Gagal membuka auto-bisu: " + (err && err.message ? err.message : "coba lagi."), "err");
+    });
+  });
 
   // build modals into DOM
   document.body.insertAdjacentHTML("beforeend",
